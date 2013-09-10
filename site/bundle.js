@@ -13,7 +13,12 @@ gjLayer.on('click', metatip().config({
     fields: [
         {
             key: 'name',
-            elem: 'h2'
+            elem: 'h3'
+        },
+        {
+            key: 'density',
+            label: true,
+            elem: 'h1'
         }
     ]
 }));
@@ -52,9 +57,24 @@ module.exports = function(d3) {
                 .append('a')
                 .text(String);
 
-            var editpane = sel
+            var viewpane = sel
                 .append('div')
                 .attr('class', 'pad1');
+
+            viewpane
+                .selectAll('div.field')
+                .data(config.fields.filter(function(f) {
+                    return properties[f.key] !== undefined;
+                }))
+                .enter()
+                .append('div')
+                .attr('class', 'field')
+                .call(fieldFormat(properties));
+
+            var editpane = sel
+                .append('div')
+                .attr('class', 'pad1')
+                .style('display', 'none');
 
             var table = editpane
                 .append('table');
@@ -113,18 +133,28 @@ module.exports = function(d3) {
         return onclick;
     }
 
+    function fieldFormat(props) {
+        return function(sel) {
+            sel.each(function(d) {
+                d3.select(this).append(d.elem)
+                    .text(props[d.key]);
+
+                if (d.label) {
+                    d3.select(this)
+                        .append('div')
+                        .attr('class', 'label')
+                        .text(typeof d.label === 'string' ? d.label : d.key);
+                }
+            });
+        };
+    }
+
     return metatip;
 };
 
 function key(d) { return d.key; }
 
-},{"./metalayer":4}],3:[function(require,module,exports){
-(function(){require("./d3");
-module.exports = d3;
-(function () { delete this.d3; })(); // unset global
-
-})()
-},{"./d3":5}],4:[function(require,module,exports){
+},{"./metalayer":4}],4:[function(require,module,exports){
 module.exports = L.Class.extend({
 
     initialize: function (latlng) {
@@ -150,7 +180,13 @@ module.exports = L.Class.extend({
     }
 });
 
-},{}],5:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+(function(){require("./d3");
+module.exports = d3;
+(function () { delete this.d3; })(); // unset global
+
+})()
+},{"./d3":5}],5:[function(require,module,exports){
 d3 = function() {
   var d3 = {
     version: "3.3.3"

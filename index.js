@@ -31,9 +31,24 @@ module.exports = function(d3) {
                 .append('a')
                 .text(String);
 
-            var editpane = sel
+            var viewpane = sel
                 .append('div')
                 .attr('class', 'pad1');
+
+            viewpane
+                .selectAll('div.field')
+                .data(config.fields.filter(function(f) {
+                    return properties[f.key] !== undefined;
+                }))
+                .enter()
+                .append('div')
+                .attr('class', 'field')
+                .call(fieldFormat(properties));
+
+            var editpane = sel
+                .append('div')
+                .attr('class', 'pad1')
+                .style('display', 'none');
 
             var table = editpane
                 .append('table');
@@ -90,6 +105,22 @@ module.exports = function(d3) {
         };
 
         return onclick;
+    }
+
+    function fieldFormat(props) {
+        return function(sel) {
+            sel.each(function(d) {
+                d3.select(this).append(d.elem)
+                    .text(props[d.key]);
+
+                if (d.label) {
+                    d3.select(this)
+                        .append('div')
+                        .attr('class', 'label')
+                        .text(typeof d.label === 'string' ? d.label : d.key);
+                }
+            });
+        };
     }
 
     return metatip;

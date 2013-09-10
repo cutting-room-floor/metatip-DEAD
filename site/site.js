@@ -12,7 +12,12 @@ gjLayer.on('click', metatip().config({
     fields: [
         {
             key: 'name',
-            elem: 'h2'
+            elem: 'h3'
+        },
+        {
+            key: 'density',
+            label: true,
+            elem: 'h1'
         }
     ]
 }));

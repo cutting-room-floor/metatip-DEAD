@@ -1,6 +1,18 @@
 .metatip-layer {
     background:#fff;
     position:absolute;
+    width:300px;
+}
+
+.metatip-layer h1,
+.metatip-layer h2,
+.metatip-layer h3 {
+    margin:0;
+}
+
+.metatip-layer div.label {
+    color:#888;
+    display:block;
 }
 
 .metatip .toggle {
