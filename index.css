@@ -1,3 +1,29 @@
+.metatip-layer {
+    background:#fff;
+    position:absolute;
+}
+
+.metatip .toggle {
+    border-right:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    display:inline-block;
+}
+
+.metatip .toggle.view a:first-child {
+    color:#222;
+}
+
+.metatip .toggle.edit a:last-child {
+    color:#222;
+}
+
+.metatip .toggle a {
+    padding:2px 5px;
+    background:#efefef;
+    color:#777;
+    display:inline-block;
+}
+
 /* Forms */
 .metatip input,
 .metatip label,
@@ -60,4 +86,8 @@
 
 .metatip .buttons-joined button:last-child {
     border-radius:0 5px 5px 0;
+}
+
+.metatip .pad1 {
+    padding:10px;
 }

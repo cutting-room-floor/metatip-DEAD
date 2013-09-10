@@ -12,5 +12,9 @@
     "tooltip"
   ],
   "author": "Tom MacWright",
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "marked": "~0.2.9",
+    "d3": "~3.3.3"
+  }
 }
