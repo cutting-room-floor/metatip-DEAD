@@ -39,13 +39,11 @@ module.exports = function(d3) {
 
             viewpane
                 .selectAll('div.field')
-                .data(config.fields.filter(function(f) {
-                    return properties[f.key] !== undefined;
-                }))
+                .data(pairs)
                 .enter()
                 .append('div')
                 .attr('class', 'field')
-                .call(fieldFormat(properties));
+                .call(fieldFormat(config.fields));
 
             var editpane = sel
                 .append('div')
@@ -109,18 +107,24 @@ module.exports = function(d3) {
         return onclick;
     }
 
-    function fieldFormat(props) {
+    function fieldFormat(fields) {
         return function(sel) {
             sel.each(function(d) {
-                d3.select(this).append(d.elem)
-                    .text(props[d.key]);
 
-                if (d.label) {
+                var f = fields[d.key] || {
+                    elem: 'span',
+                    label: true
+                };
+
+                if (f.label) {
                     d3.select(this)
                         .append('div')
                         .attr('class', 'label')
-                        .text(typeof d.label === 'string' ? d.label : d.key);
+                        .text(typeof f.label === 'string' ? f.label : d.key);
                 }
+
+                d3.select(this).append(f.elem)
+                    .text(d.value);
             });
         };
     }
