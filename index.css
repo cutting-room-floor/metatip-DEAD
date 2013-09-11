@@ -3,13 +3,7 @@
     position:absolute;
     width:300px;
     margin-left:-150px;
-    margin-top:15px;
-}
-
-.metatip-layer h1,
-.metatip-layer h2,
-.metatip-layer h3 {
-    margin:0;
+    margin-top:10px;
 }
 
 .metatip-layer:after {
@@ -22,9 +16,19 @@
 	pointer-events: none;
 	border-color: rgba(255, 255, 255, 0);
 	border-bottom-color: #fff;
-	border-width: 15px;
+	border-width: 10px;
 	left: 50%;
-	margin-left: -15px;
+	margin-left: -10px;
+}
+
+.metatip-layer .field img {
+    max-width:280px !important;
+}
+
+.metatip-layer h1,
+.metatip-layer h2,
+.metatip-layer h3 {
+    margin:0;
 }
 
 .metatip-layer div.label {

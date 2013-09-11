@@ -108,14 +108,14 @@ module.exports = function(d3) {
                     .append('input')
                     .attr('type', 'text')
                     .property('value', function(d) {
-                        return d.value;
+                        return d.key;
                     });
 
                 enter.append('td')
                     .append('input')
                     .attr('type', 'text')
                     .property('value', function(d) {
-                        return d.key;
+                        return d.value;
                     });
             }
 
@@ -147,8 +147,14 @@ module.exports = function(d3) {
                         .text(typeof f.label === 'string' ? f.label : d.key);
                 }
 
-                d3.select(this).append(f.elem)
-                    .text(d.value);
+                if (f.elem === 'img') {
+                    d3.select(this).append(f.elem)
+                        .attr('src', d.value);
+                } else {
+                    d3.select(this).append(f.elem)
+                        .text(d.value);
+                }
+
             });
         };
     }

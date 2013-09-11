@@ -16,5 +16,8 @@
   "dependencies": {
     "marked": "~0.2.9",
     "d3": "~3.3.3"
+  },
+  "devDependencies": {
+    "brfs": "0.0.8"
   }
 }
