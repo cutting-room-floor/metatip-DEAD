@@ -2,14 +2,21 @@ var MetaLayer = require('./metalayer');
 
 module.exports = function(d3) {
     function metatip() {
+
+        var layer;
+
         function onclick(e) {
+
+            if (layer) {
+                e.target._map.removeLayer(layer);
+            }
 
             var l = e.layer,
                 properties = ('toGeoJSON' in l) && l.toGeoJSON().properties;
 
             if (!properties) return;
 
-            var layer = (new MetaLayer(e.latlng));
+            layer = (new MetaLayer(e.latlng));
 
             e.target._map.addLayer(layer);
 
@@ -29,11 +36,27 @@ module.exports = function(d3) {
                 .data(['view', 'edit'])
                 .enter()
                 .append('a')
-                .text(String);
+                .text(String)
+                .on('click', function(d) {
+                    sel.selectAll('.pane').classed('hide', function() {
+                        return !d3.select(this).classed(d);
+                    });
+                    var t = this;
+                    toggle.classed('active', function() {
+                        return t == this;
+                    });
+                })
+                .classed('active', function(d) { return d === 'view'; });
+
+            var close = sel
+                .append('span')
+                .attr('class', 'close')
+                .text('×')
+                .on('click', cancel);
 
             var viewpane = sel
                 .append('div')
-                .attr('class', 'pad1');
+                .attr('class', 'pad1 view pane');
 
             viewpane
                 .selectAll('div.field')
@@ -45,8 +68,7 @@ module.exports = function(d3) {
 
             var editpane = sel
                 .append('div')
-                .attr('class', 'pad1')
-                .style('display', 'none');
+                .attr('class', 'pad1 edit pane hide');
 
             var table = editpane
                 .append('table');
@@ -66,7 +88,9 @@ module.exports = function(d3) {
                 .on('click', cancel);
 
             function save() { }
-            function cancel() { }
+            function cancel() {
+                e.target._map.removeLayer(layer);
+            }
 
             function draw() {
                 var tr = table

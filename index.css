@@ -2,6 +2,8 @@
     background:#fff;
     position:absolute;
     width:300px;
+    margin-left:-150px;
+    margin-top:15px;
 }
 
 .metatip-layer h1,
@@ -10,28 +12,57 @@
     margin:0;
 }
 
+.metatip-layer:after {
+	bottom: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(255, 255, 255, 0);
+	border-bottom-color: #fff;
+	border-width: 15px;
+	left: 50%;
+	margin-left: -15px;
+}
+
 .metatip-layer div.label {
     color:#888;
     display:block;
 }
 
-.metatip .toggle {
-    border-right:1px solid #ccc;
-    border-bottom:1px solid #ccc;
-    display:inline-block;
+.metatip .close {
+    position:absolute;
+    right:0;
+    top:0;
+    color:#888;
+    padding:5px;
+    line-height: 10px;
+    font-size: 20px;
 }
 
-.metatip .toggle.view a:first-child {
+.metatip .close:hover {
     color:#222;
 }
 
-.metatip .toggle.edit a:last-child {
+.metatip .toggle {
+    border-right:1px solid #eee;
+    border-bottom:1px solid #eee;
+    display:inline-block;
+}
+
+.metatip .hide {
+    display:none;
+}
+
+.metatip .toggle a.active {
     color:#222;
 }
 
 .metatip .toggle a {
     padding:2px 5px;
-    background:#efefef;
+    background:#f7f7f7;
     color:#777;
     display:inline-block;
 }
