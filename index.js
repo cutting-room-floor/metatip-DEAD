@@ -3,7 +3,21 @@ var MetaLayer = require('./metalayer');
 module.exports = function(d3) {
     function metatip() {
 
+        var dispatch = d3.dispatch('save', 'del');
+
+        var elements = [
+            'h1',
+            'h2',
+            'h3',
+            'p',
+            'pre',
+            'img'
+        ];
         var layer;
+        var mode = 'view';
+        var config = {
+            fields: {}
+        };
 
         function onclick(e) {
 
@@ -26,8 +40,15 @@ module.exports = function(d3) {
 
             var sel = d3
                 .select(layer._el)
+                .on('click', stopProp)
+                .on('mousedown', stopProp)
+                .on('mouseup', stopProp)
                 .append('div')
                 .attr('class', 'metatip');
+
+            function stopProp() {
+                d3.event.stopPropagation();
+            }
 
             var toggle = sel
                 .append('span')
@@ -38,15 +59,16 @@ module.exports = function(d3) {
                 .append('a')
                 .text(String)
                 .on('click', function(d) {
+                    var t = this;
+                    mode = d;
                     sel.selectAll('.pane').classed('hide', function() {
                         return !d3.select(this).classed(d);
                     });
-                    var t = this;
                     toggle.classed('active', function() {
                         return t == this;
                     });
                 })
-                .classed('active', function(d) { return d === 'view'; });
+                .classed('active', function(d) { return d === mode; });
 
             var close = sel
                 .append('span')
@@ -56,7 +78,8 @@ module.exports = function(d3) {
 
             var viewpane = sel
                 .append('div')
-                .attr('class', 'pad1 view pane');
+                .attr('class', 'pad1 view pane')
+                .classed('hide', mode === 'edit');
 
             viewpane
                 .selectAll('div.field')
@@ -68,10 +91,19 @@ module.exports = function(d3) {
 
             var editpane = sel
                 .append('div')
-                .attr('class', 'pad1 edit pane hide');
+                .attr('class', 'pad1 edit pane')
+                .classed('hide', mode === 'view');
 
             var table = editpane
                 .append('table');
+
+            draw();
+
+            editpane
+                .append('button')
+                .attr('class', 'add-row')
+                .text('+ add row')
+                .on('click', addRow);
 
             var actions = editpane
                 .append('div')
@@ -87,13 +119,52 @@ module.exports = function(d3) {
                 .text('Cancel')
                 .on('click', cancel);
 
+            actions
+                .append('button')
+                .text('Delete')
+                .on('click', del);
+
+            function del() {
+                d3.select(this)
+                    .text('Sure?')
+                    .classed('confirm', true)
+                    .on('click', confirmedDel);
+            }
+
+            function confirmedDel() {
+                cancel();
+                dispatch.del({
+                    layer: e.target
+                });
+            }
+
             function save() { }
+
+            function read() {
+                pairs = [];
+                table
+                    .selectAll('tr')
+                    .each(function() {
+                        pairs.push({
+                            key: d3.select(this).select('input.key').property('value'),
+                            value: d3.select(this).select('input.value').property('value')
+                        });
+                    });
+            }
+
+            function addRow() {
+                read();
+                pairs.push({ key: '', value: '' });
+                draw();
+            }
+
             function cancel() {
                 e.target._map.removeLayer(layer);
             }
 
             function draw() {
                 var tr = table
+                    .html('')
                     .selectAll('tr')
                     .data(pairs, key);
 
@@ -105,6 +176,7 @@ module.exports = function(d3) {
                 enter.append('th')
                     .append('input')
                     .attr('type', 'text')
+                    .attr('class', 'key')
                     .property('value', function(d) {
                         return d.key;
                     });
@@ -112,12 +184,37 @@ module.exports = function(d3) {
                 enter.append('td')
                     .append('input')
                     .attr('type', 'text')
+                    .attr('class', 'value')
                     .property('value', function(d) {
                         return d.value;
                     });
+
+                var gear = enter.append('td')
+                    .attr('class', 'gear');
+
+                gear.append('button')
+                    .text('*')
+                    .on('click', configure);
+
+                var config = gear.append('div')
+                    .attr('class', 'config hide');
+
+                config
+                    .append('select')
+                    .selectAll('option')
+                    .data(elements)
+                    .enter()
+                    .append('option')
+                    .text(String);
             }
 
-            draw();
+            function configure() {
+                var config = d3.select(d3.select(this)
+                    .node()
+                    .parentNode)
+                    .select('.config');
+                config.classed('hide', !config.classed('hide'));
+            }
         }
 
         onclick.config = function(_) {
@@ -126,7 +223,7 @@ module.exports = function(d3) {
             return onclick;
         };
 
-        return onclick;
+        return d3.rebind(onclick, dispatch, 'on');
     }
 
     function fieldFormat(fields) {

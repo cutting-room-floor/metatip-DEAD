@@ -90,6 +90,11 @@
     border-collapse:collapse;
 }
 
+.metatip table {
+    border:1px solid rgba(0,0,0,0.1);
+    width:280px;
+}
+
 .metatip input[type=text] {
     background-color:#fff;
     border:1px solid rgba(0,0,0,0.1);
@@ -104,12 +109,30 @@
     vertical-align:middle;
     padding:5px;
     border-radius:0;
+
+    width:117px;
 }
+
+
 
 .metatip input[type=text]:focus {
     outline:thin dotted\8; /* ie8 below */
     border-color:rgba(0,0,0,0.25);
-    color:#404040;
+    color:#222;
+}
+
+.metatip .add-row {
+    display:block;
+    font-size:10px;
+    color:#555;
+    width:280px;
+    padding:5px 0;
+    cursor:pointer;
+}
+
+.metatip .add-row:hover {
+    color:#222;
+    background:#eee;
 }
 
 .metatip .buttons-joined {
@@ -123,18 +146,41 @@
     cursor:pointer;
 }
 
+.metatip .buttons-joined button.confirm {
+    background:#E0AFAF !important;
+}
+
 .metatip .buttons-joined button:hover {
-    background:#eec;
+    background:#ddd;
 }
 
 .metatip .buttons-joined button:first-child {
-    border-radius:5px 0 0 5px;
+    border-radius:2px 0 0 2px;
 }
 
 .metatip .buttons-joined button:last-child {
-    border-radius:0 5px 5px 0;
+    border-radius:0 2px 2px 0;
+}
+
+.metatip td.gear {
+    background:#eee;
+    position:relative;
+}
+
+.metatip td.gear button {
+    width:20px;
+    height:20px;
 }
 
 .metatip .pad1 {
     padding:10px;
+}
+
+.metatip .config {
+    position:absolute;
+    top: -1px;
+    left: 20px;
+    background: #eee;
+    padding: 4px;
+    border: 1px solid #ccc;
 }
