@@ -40,12 +40,17 @@ module.exports = function(d3) {
 
             var pairs = d3.entries(properties);
 
-            var sel = d3
+            var el = d3
                 .select(layer._el)
                 .on('click', stopProp)
                 .on('mousedown', stopProp)
-                .on('mouseup', stopProp)
-                .append('div')
+                .on('mouseup', stopProp);
+
+            if (l.options && l.options.icon && l.options.icon.options.iconAnchor) {
+                el.style('margin-bottom', (10 + l.options.icon.options.iconAnchor[1]) + 'px');
+            }
+
+            var sel = el.append('div')
                 .attr('class', 'metatip');
 
             function stopProp() {

@@ -3,7 +3,10 @@
     position:absolute;
     width:300px;
     margin-left:-150px;
-    margin-top:10px;
+    bottom:0;
+    margin-bottom:10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    cursor:default;
 }
 
 .metatip-layer:after {
@@ -15,9 +18,10 @@
 	position: absolute;
 	pointer-events: none;
 	border-color: rgba(255, 255, 255, 0);
-	border-bottom-color: #fff;
+	border-top-color: #fff;
 	border-width: 10px;
 	left: 50%;
+    top: 100%;
 	margin-left: -10px;
 }
 
