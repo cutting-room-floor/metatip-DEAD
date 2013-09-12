@@ -33,7 +33,7 @@ var linky = require('linky'),
 module.exports = function(d3) {
     function metatip(map) {
 
-        var dispatch = d3.dispatch('save', 'del'),
+        var dispatch = d3.dispatch('save', 'del', 'config'),
             elements = [
                 'h1',
                 'h2',
@@ -66,7 +66,6 @@ module.exports = function(d3) {
             if (!properties) return;
 
             layer = (new MetaLayer(e.latlng));
-
             e.target._map.addLayer(layer);
 
             if (!Object.keys(properties).length) {
@@ -88,10 +87,6 @@ module.exports = function(d3) {
 
             var sel = el.append('div')
                 .attr('class', 'metatip');
-
-            function stopProp() {
-                d3.event.stopPropagation();
-            }
 
             var toggle = sel
                 .append('span')
@@ -206,6 +201,7 @@ module.exports = function(d3) {
             }
 
             function save() {
+                pairs = read();
                 dispatch.save({
                     layer: e.target,
                     data: pairsObject(read())
@@ -256,6 +252,9 @@ module.exports = function(d3) {
                     .attr('class', 'key')
                     .property('value', function(d) {
                         return d.key;
+                    })
+                    .on('keyup', function(d) {
+                        d.key = this.value;
                     });
 
                 enter.append('td')
@@ -264,6 +263,9 @@ module.exports = function(d3) {
                     .attr('class', 'value')
                     .property('value', function(d) {
                         return d.value;
+                    })
+                    .on('keyup', function(d) {
+                        d.value = this.value;
                     });
 
                 var gear = enter.append('td')
@@ -283,6 +285,7 @@ module.exports = function(d3) {
                         if (config.fields[d.key]) c = config.fields[d.key];
                         else c = config.fields[d.key] = {};
                         c.elem = elem;
+                        dispatch.config(config.fields);
                     });
 
                 selectUI.selectAll('option')
@@ -317,13 +320,9 @@ module.exports = function(d3) {
     function fieldFormat(fields) {
         return function(sel) {
             sel.each(function(d) {
-                var selection = d3.select(this);
-
-                var f = fields[d.key] || {
-                    elem: 'span'
-                };
-
-                var elem = selection.append(f.elem);
+                var selection = d3.select(this),
+                    f = fields[d.key] || { elem: 'span' },
+                    elem = selection.append(f.elem);
 
                 if (f.elem === 'img') {
                     elem.attr('src', d.value);
@@ -339,6 +338,10 @@ module.exports = function(d3) {
                     .text(d.key);
             });
         };
+    }
+
+    function stopProp() {
+        d3.event.stopPropagation();
     }
 
     return metatip;
