@@ -15,7 +15,9 @@
   "license": "BSD",
   "dependencies": {
     "marked": "~0.2.9",
-    "d3": "~3.3.3"
+    "d3": "~3.3.3",
+    "linky": "0.0.0",
+    "sanitize-caja": "0.0.0"
   },
   "devDependencies": {
     "brfs": "0.0.8"

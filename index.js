@@ -1,23 +1,24 @@
-var MetaLayer = require('./metalayer');
+var linky = require('linky'),
+    sanitize = require('sanitize-caja'),
+    MetaLayer = require('./metalayer');
 
 module.exports = function(d3) {
     function metatip(map) {
 
-        var dispatch = d3.dispatch('save', 'del');
-
-        var elements = [
-            'h1',
-            'h2',
-            'h3',
-            'p',
-            'pre',
-            'img'
-        ];
-        var layer;
-        var mode = 'view';
-        var config = {
-            fields: {}
-        };
+        var dispatch = d3.dispatch('save', 'del'),
+            elements = [
+                'h1',
+                'h2',
+                'h3',
+                'p',
+                'pre',
+                'img'
+            ],
+            layer,
+            mode = 'view',
+            config = {
+                fields: {}
+            };
 
         map.on('preclick', clickout);
 
@@ -78,6 +79,8 @@ module.exports = function(d3) {
                     toggle.classed('active', function() {
                         return t == this;
                     });
+                    if (d === 'view') drawView();
+                    if (d === 'edit') draw();
                 })
                 .classed('active', function(d) { return d === mode; });
 
@@ -92,13 +95,24 @@ module.exports = function(d3) {
                 .attr('class', 'pad1 view pane')
                 .classed('hide', mode === 'edit');
 
-            viewpane
-                .selectAll('div.field')
-                .data(pairs)
-                .enter()
-                .append('div')
-                .attr('class', 'field')
-                .call(fieldFormat(config.fields));
+            function drawView() {
+                var field = viewpane
+                    .selectAll('div.field')
+                    .data(pairs, function(d) {
+                        return d.key;
+                    });
+
+                field.exit().remove();
+
+                field
+                    .enter()
+                    .append('div')
+                    .attr('class', 'field');
+
+                field
+                    .html('')
+                    .call(fieldFormat(config.fields));
+            }
 
             var editpane = sel
                 .append('div')
@@ -108,6 +122,7 @@ module.exports = function(d3) {
             var table = editpane
                 .append('table');
 
+            drawView();
             draw();
 
             editpane
@@ -153,14 +168,17 @@ module.exports = function(d3) {
 
             function read() {
                 pairs = [];
+
                 table
                     .selectAll('tr')
-                    .each(function() {
-                        pairs.push({
-                            key: d3.select(this).select('input.key').property('value'),
-                            value: d3.select(this).select('input.value').property('value')
-                        });
+                    .each(collect);
+
+                function collect() {
+                    pairs.push({
+                        key: d3.select(this).select('input.key').property('value'),
+                        value: d3.select(this).select('input.value').property('value')
                     });
+                }
             }
 
             function addRow() {
@@ -207,16 +225,27 @@ module.exports = function(d3) {
                     .text('*')
                     .on('click', configure);
 
-                var config = gear.append('div')
+                var configUI = gear.append('div')
                     .attr('class', 'config hide');
 
-                config
+                var selectUI = configUI
                     .append('select')
-                    .selectAll('option')
+                    .on('change', function(d) {
+                        var elem = d3.select(this).property('value'), c;
+                        if (config.fields[d.key]) c = config.fields[d.key];
+                        else c = config.fields[d.key] = {};
+                        c.elem = elem;
+                    });
+
+                selectUI.selectAll('option')
                     .data(elements)
                     .enter()
                     .append('option')
                     .text(String);
+
+                selectUI.property('value', function(d) {
+                    return (config.fields[d.key] || { elem: 'span' }).elem;
+                });
             }
 
             function configure() {
@@ -242,23 +271,22 @@ module.exports = function(d3) {
             sel.each(function(d) {
 
                 var f = fields[d.key] || {
-                    elem: 'span',
-                    label: true
+                    elem: 'span'
                 };
 
-                if (f.label) {
-                    d3.select(this)
-                        .append('div')
-                        .attr('class', 'label')
-                        .text(typeof f.label === 'string' ? f.label : d.key);
-                }
+                d3.select(this)
+                    .append('div')
+                    .attr('class', 'label')
+                    .text(d.key);
 
                 if (f.elem === 'img') {
                     d3.select(this).append(f.elem)
                         .attr('src', d.value);
                 } else {
                     d3.select(this).append(f.elem)
-                        .text(d.value);
+                        .html(sanitize(linky(d.value, {
+                            target: '_blank'
+                        })));
                 }
 
             });

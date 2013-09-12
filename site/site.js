@@ -17,7 +17,6 @@ var d3 = require('d3'),
                 elem: 'h3'
             },
             density: {
-                label: true,
                 elem: 'h1'
             }
         }
@@ -40,4 +39,16 @@ var d3 = require('d3'),
             }
         }
     }));
+})();
+
+(function() {
+    var map = L.map('map-3').setView([37.8, -96], 4),
+        gjLayer = L.geoJson(JSON.parse(fs.readFileSync('site/links.json')));
+
+    L.tileLayer('http://a.tiles.mapbox.com/v3/tmcw.map-l1m85h7s/{z}/{x}/{y}.png')
+        .addTo(map);
+
+    gjLayer.addTo(map);
+
+    gjLayer.on('click', metatip(map));
 })();
