@@ -55,8 +55,6 @@
 }
 
 .metatip .toggle {
-    border-right:1px solid #eee;
-    border-bottom:1px solid #eee;
     display:inline-block;
 }
 
@@ -66,11 +64,11 @@
 
 .metatip .toggle a.active {
     color:#222;
+    background-color:#eee;
 }
 
 .metatip .toggle a {
     padding:2px 5px;
-    background:#f7f7f7;
     color:#777;
     display:inline-block;
 }

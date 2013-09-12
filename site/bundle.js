@@ -57,6 +57,21 @@ var d3 = require('d3'),
     gjLayer.on('click', metatip(map));
 })();
 
+(function() {
+    var map = L.map('map-4').setView([37.8, -96], 4),
+        gjLayer = L.geoJson({
+            type: 'Point',
+            coordinates: [-100, 38]
+        });
+
+    L.tileLayer('http://a.tiles.mapbox.com/v3/tmcw.map-l1m85h7s/{z}/{x}/{y}.png')
+        .addTo(map);
+
+    gjLayer.addTo(map);
+
+    gjLayer.on('click', metatip(map));
+})();
+
 },{"fs":1,"../":3,"d3":4}],4:[function(require,module,exports){
 (function(){require("./d3");
 module.exports = d3;
@@ -9089,7 +9104,10 @@ module.exports = function(d3) {
 
             e.target._map.addLayer(layer);
 
-            if (!Object.keys(properties).length) properties = { '': '' };
+            if (!Object.keys(properties).length) {
+                properties = { '': '' };
+                mode = 'edit';
+            }
 
             var pairs = d3.entries(properties);
 
@@ -9212,10 +9230,25 @@ module.exports = function(d3) {
                 });
             }
 
-            function save() { }
+            function pairsObject(pairs) {
+                var o = {};
+
+                pairs.forEach(function(p) {
+                    if (p.key) o[p.key] = pairs[p.value];
+                });
+
+                return o;
+            }
+
+            function save() {
+                dispatch.save({
+                    layer: e.target,
+                    data: pairsObject(read())
+                });
+            }
 
             function read() {
-                pairs = [];
+                var pairs = [];
 
                 table
                     .selectAll('tr')
@@ -9227,10 +9260,12 @@ module.exports = function(d3) {
                         value: d3.select(this).select('input.value').property('value')
                     });
                 }
+
+                return pairs;
             }
 
             function addRow() {
-                read();
+                pairs = read();
                 pairs.push({ key: '', value: '' });
                 draw();
             }
@@ -9317,26 +9352,26 @@ module.exports = function(d3) {
     function fieldFormat(fields) {
         return function(sel) {
             sel.each(function(d) {
+                var selection = d3.select(this);
 
                 var f = fields[d.key] || {
                     elem: 'span'
                 };
 
-                d3.select(this)
+                var elem = selection.append(f.elem);
+
+                if (f.elem === 'img') {
+                    elem.attr('src', d.value);
+                } else {
+                    elem.html(sanitize(linky('' + d.value, {
+                        target: '_blank'
+                    })));
+                }
+
+                selection
                     .append('div')
                     .attr('class', 'label')
                     .text(d.key);
-
-                if (f.elem === 'img') {
-                    d3.select(this).append(f.elem)
-                        .attr('src', d.value);
-                } else {
-                    d3.select(this).append(f.elem)
-                        .html(sanitize(linky(d.value, {
-                            target: '_blank'
-                        })));
-                }
-
             });
         };
     }
