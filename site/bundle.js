@@ -15,7 +15,7 @@ var d3 = require('d3'),
 
     gjLayer.addTo(map);
 
-    gjLayer.on('click', metatip().config({
+    gjLayer.on('click', metatip(map).config({
         fields: {
             name: {
                 elem: 'h3'
@@ -37,7 +37,7 @@ var d3 = require('d3'),
 
     gjLayer.addTo(map);
 
-    gjLayer.on('click', metatip().config({
+    gjLayer.on('click', metatip(map).config({
         fields: {
             image: {
                 elem: 'img'
@@ -56,7 +56,7 @@ module.exports = d3;
 var MetaLayer = require('./metalayer');
 
 module.exports = function(d3) {
-    function metatip() {
+    function metatip(map) {
 
         var dispatch = d3.dispatch('save', 'del');
 
@@ -73,6 +73,12 @@ module.exports = function(d3) {
         var config = {
             fields: {}
         };
+
+        map.on('preclick', clickout);
+
+        function clickout() {
+            if (layer) map.removeLayer(layer);
+        }
 
         function onclick(e) {
 

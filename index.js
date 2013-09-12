@@ -1,7 +1,7 @@
 var MetaLayer = require('./metalayer');
 
 module.exports = function(d3) {
-    function metatip() {
+    function metatip(map) {
 
         var dispatch = d3.dispatch('save', 'del');
 
@@ -18,6 +18,12 @@ module.exports = function(d3) {
         var config = {
             fields: {}
         };
+
+        map.on('preclick', clickout);
+
+        function clickout() {
+            if (layer) map.removeLayer(layer);
+        }
 
         function onclick(e) {
 

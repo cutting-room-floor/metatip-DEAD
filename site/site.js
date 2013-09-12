@@ -11,7 +11,7 @@ var d3 = require('d3'),
 
     gjLayer.addTo(map);
 
-    gjLayer.on('click', metatip().config({
+    gjLayer.on('click', metatip(map).config({
         fields: {
             name: {
                 elem: 'h3'
@@ -33,7 +33,7 @@ var d3 = require('d3'),
 
     gjLayer.addTo(map);
 
-    gjLayer.on('click', metatip().config({
+    gjLayer.on('click', metatip(map).config({
         fields: {
             image: {
                 elem: 'img'
